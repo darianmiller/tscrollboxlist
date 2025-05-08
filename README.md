@@ -30,11 +30,11 @@ procedure TMyFixedHeightFrame.DoBind(const Item:TMyFixedData; const Index:Intege
 begin
   Label2.Caption := Item.Title;
   Label3.Caption := Item.Description;
-  Label4.Caption := Item.CurrentValue.ToString;  //Helps prove the binding changed
+  Label4.Caption := Item.CurrentValue.ToString;
 end;
 ````
 5. Create a `TVariableHeightScrollBoxList` instance for variable item heights or `TFixedHeightScrollBoxList` for rows with all the same heights.
-For example:  `TFixedHeightScrollBoxList<TMyFixedHeightFrame>.Create(ScrollBox1, FIXED_HEIGHT, FFixedData.Count, MyFixedFrameCreate, MyFixedHeightBind, CACHE_SIZE);`
+For example:  `TFixedHeightScrollBoxList<TMyFixedHeightFrame>.Create(ScrollBox1, {Height=}100, FFixedData.Count, MyFixedFrameCreate, MyFrameBind, CACHE_SIZE);`
 
 With two small/easy functions defined and one ScrollBoxList instance created, you can virtually scroll your data on a designated TScrollBox with a CACHE_SIZE number of TFrame instances that are dynamically built and populated as needed.
 
