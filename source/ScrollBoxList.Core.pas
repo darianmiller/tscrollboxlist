@@ -52,11 +52,9 @@ type
     function HandleNavigateKeyPress(Key:Word; Shift:TShiftState):Boolean;
     procedure ReleaseUnusedItems(const Visible:TList<Integer>);
     procedure UpdateView;
-
-    procedure Log(const Text:string); inline;
   public
     constructor Create(AScrollBox:TScrollBox; GetCount:TScrollBoxListGetCount; GetHeight:TScrollBoxListGetItemHeight;
-      CreateItem:TScrollBoxListCreateItem<TView>; BindItem:TScrollBoxListBindItem<TView>; MaxCacheSize:Integer = 0);
+      CreateItem:TScrollBoxListCreateItem<TView>; BindItem:TScrollBoxListBindItem<TView>; MaxCacheSize:Integer);
     destructor Destroy; override;
 
     procedure Refresh;
@@ -71,7 +69,7 @@ uses
 
 
 constructor TScrollBoxListCore<TView>.Create(AScrollBox:TScrollBox; GetCount:TScrollBoxListGetCount; GetHeight:TScrollBoxListGetItemHeight;
-  CreateItem:TScrollBoxListCreateItem<TView>; BindItem:TScrollBoxListBindItem<TView>; MaxCacheSize:Integer = 0);
+  CreateItem:TScrollBoxListCreateItem<TView>; BindItem:TScrollBoxListBindItem<TView>; MaxCacheSize:Integer);
 begin
   inherited Create;
   FScrollBox := AScrollBox;
@@ -263,39 +261,29 @@ begin
         Visible.Add(i);
         IndexIsActive := FActive.TryGetValue(i, View); // if active, can skip create and bind and is already visible
         IndexIsPooled := False;
-        if IndexIsActive then
-        begin
-          Log(Format('Re-positioning active view %d', [i]));
-        end
-        else
+        if not IndexIsActive then
         begin
           IndexIsPooled := FPool.TryGetValue(i, View);
           if IndexIsPooled then // re-use pooled view for this index (can skip create + bind, but need to set visible)
           begin
-            Log(Format('Re-using View from pool %d', [i]));
             FPool.Remove(i);
           end
-          else
+          else if not(FMaxCacheSize <= 0) then //no need to pool - unlimited cache
           begin
-            if (FPool.count > 0) and (not((FMaxCacheSize <= 0) or (FPool.count < FMaxCacheSize))) then
+            if (FPool.count > 0) then
             begin
-              // remove from a full queue to be reused  (can skip create, but need to bind)
-              var
-              Pairs := FPool.ToArray;
-              var
-              FIFO := Pairs[0];
+              // remove oldest from pool to be reused  (can skip create, but need to bind)
+              var Pairs := FPool.ToArray;
+              var FIFO := Pairs[0];
               View := FIFO.Value;
-              Log(Format('Removing oldest in queue for View reuse: [%d]', [FIFO.Key]));
               FPool.Remove(FIFO.Key);
             end
             else
             begin
-              // not an active view, and no room for pool re-use, so this is the heaviest load: now need to create, bind, and set visible
-              Log(Format('Creating View %d', [i]));
+              // not an active view, and nothing in pool re-use, so this is the heaviest load: now need to create, bind, and set visible
               View := FCreateItem(FScrollBox.Owner, FScrollBox);
             end;
           end;
-          Log(Format('Activating View %d', [i]));
           FActive.Add(i, View);
         end;
         View.SetBounds(0, yAccum - topView, FScrollBox.ClientWidth, h);
@@ -303,10 +291,8 @@ begin
         begin
           if not IndexIsPooled then
           begin
-            Log(Format('Binding view %d', [i]));
             FBindItem(View, i);
           end;
-          Log(Format('Making view visible %d', [i]));
           View.Visible := True;
         end;
       end;
@@ -332,7 +318,6 @@ begin
     for idx in FActive.Keys do
       if not Visible.Contains(idx) then
       begin
-        Log(Format('View fell out of sight: %d', [idx]));
         ToRecycle.Add(idx);
       end;
 
@@ -340,14 +325,12 @@ begin
     for idx in ToRecycle do
       if FActive.TryGetValue(idx, View) then
       begin
-        Log(Format('View no longer active/visible: %d', [idx]));
         FActive.Remove(idx);
         View.Visible := False;
 
         // If cache is unlimited (<=0) or still under capacity, keep it
         if (FMaxCacheSize <= 0) or (FPool.count < FMaxCacheSize) then
         begin
-          Log(Format('Caching View: %d', [idx]));
           FPool.Add(idx, View)
         end
         else
@@ -355,32 +338,18 @@ begin
           if FPool.count > 0 then
           begin
             // remove oldest in the pool
-            var
-            Pairs := FPool.ToArray;
-            var
-            FIFO := Pairs[0];
+            var Pairs := FPool.ToArray;
+            var  FIFO := Pairs[0];
             FIFO.Value.Free;
-            Log(Format('Removing oldest in queue: %d', [FIFO.Key]));
             FPool.Remove(FIFO.Key);
           end;
           // add to end of queue
-          Log(Format('Adding to queue: %d', [idx]));
           FPool.Add(idx, View);
         end;
       end;
   finally
     ToRecycle.Free;
   end;
-end;
-
-
-procedure TScrollBoxListCore<TView>.Log(const Text:string);
-begin
-  {$IFDEF DEBUG}
-  var
-  Log := FormatDateTime('hh:nn:ss.zzz', Now) + ' ' + Text;
-  OutputDebugString(PChar(Log));
-  {$ENDIF}
 end;
 
 end.

@@ -48,7 +48,7 @@ type
     /// <param name="OnBindItem">Callback to bind a view to its model and index</param>
     constructor Create(const AScrollBox:TScrollBox; const DataElements:TEnumerable<IScrollBoxListItem<TModel>>;
       const OnCreateItem:TScrollBoxListCreateItem<TView>; const OnBindItem:TVariableHeightBindItem<TView, TModel>;
-      const MaxCacheSize:Integer = 0);
+      const MaxCacheSize:Integer);
     destructor Destroy; override;
 
     /// <summary>Recalculate range and refresh visible views</summary>
@@ -64,7 +64,7 @@ uses
 
 constructor TVariableHeightScrollBoxList<TView, TModel>.Create(const AScrollBox:TScrollBox;
   const DataElements:TEnumerable<IScrollBoxListItem<TModel>>; const OnCreateItem:TScrollBoxListCreateItem<TView>;
-  const OnBindItem:TVariableHeightBindItem<TView, TModel>; const MaxCacheSize:Integer = 0);
+  const OnBindItem:TVariableHeightBindItem<TView, TModel>; const MaxCacheSize:Integer);
 var
   ItemIntf:IScrollBoxListItem<TModel>;
 begin

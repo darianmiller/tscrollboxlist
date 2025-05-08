@@ -30,7 +30,7 @@ type
     /// <param name="OnCreateItem">Factory delegate to instantiate a TView</param>
     /// <param name="OnBindItem">Delegate to bind each TView to its index</param>
     constructor Create(const AScrollBox:TScrollBox; const RowHeight:Integer; const ItemCount:Integer;
-      const OnCreateItem:TScrollBoxListCreateItem<TView>; const OnBindItem:TScrollBoxListBindItem<TView>; const MaxCacheSize:Integer = 0);
+      const OnCreateItem:TScrollBoxListCreateItem<TView>; const OnBindItem:TScrollBoxListBindItem<TView>; const MaxCacheSize:Integer);
     destructor Destroy; override;
 
     /// <summary>Recalculate range and redraw all visible items</summary>
@@ -42,7 +42,7 @@ implementation
 
 
 constructor TFixedHeightScrollBoxList<TView>.Create(const AScrollBox:TScrollBox; const RowHeight:Integer; const ItemCount:Integer;
-  const OnCreateItem:TScrollBoxListCreateItem<TView>; const OnBindItem:TScrollBoxListBindItem<TView>; const MaxCacheSize:Integer = 0);
+  const OnCreateItem:TScrollBoxListCreateItem<TView>; const OnBindItem:TScrollBoxListBindItem<TView>; const MaxCacheSize:Integer);
 begin
   inherited Create;
   FItemCount := ItemCount;
