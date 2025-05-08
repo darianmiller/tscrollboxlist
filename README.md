@@ -34,7 +34,7 @@ begin
 end;
 ````
 5. Create a `TVariableHeightScrollBoxList` instance for variable item heights or `TFixedHeightScrollBoxList` for rows with all the same heights.
-For example:  `TFixedHeightScrollBoxList<TMyFixedHeightFrame>.Create(ScrollBox1, {Height=}100, FFixedData.Count, MyFixedFrameCreate, MyFrameBind, CACHE_SIZE);`
+For example:  `TFixedHeightScrollBoxList<TMyFixedHeightFrame>.Create(ScrollBox1, {Height=}100, FFixedData.Count, MyFixedFrameCreate, MyDataFrameBind, CACHE_SIZE);`
 
 With two small/easy functions defined and one ScrollBoxList instance created, you can virtually scroll your data on a designated TScrollBox with a CACHE_SIZE number of TFrame instances that are dynamically built and populated as needed.
 
