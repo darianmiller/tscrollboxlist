@@ -16,6 +16,10 @@ type
   TFixedHeightScrollBoxList<TView:TWinControl> = class
   private
     FEngine:TScrollBoxListCore<TView>;
+    FItemCount:Integer;
+    FFixedRowHeight:Integer;
+    function GetItemCount:Integer;
+    function GetItemHeight(const Index:Integer):Integer;
   public
     /// <summary>
     /// Creates a virtual list of fixed-height items inside AScrollBox
@@ -41,17 +45,10 @@ constructor TFixedHeightScrollBoxList<TView>.Create(const AScrollBox:TScrollBox;
   const OnCreateItem:TScrollBoxListCreateItem<TView>; const OnBindItem:TScrollBoxListBindItem<TView>; const MaxCacheSize:Integer = 0);
 begin
   inherited Create;
-  FEngine := TScrollBoxListCore<TView>.Create(AScrollBox,
-    // total count
-    function:Integer
-    begin
-      Result := ItemCount;
-    end,
-  // fixed height
-    function(const Index:Integer):Integer
-    begin
-      Result := RowHeight;
-    end, OnCreateItem, OnBindItem, MaxCacheSize);
+  FItemCount := ItemCount;
+  FFixedRowHeight := RowHeight;
+
+  FEngine := TScrollBoxListCore<TView>.Create(AScrollBox, GetItemCount, GetItemHeight, OnCreateItem, OnBindItem, MaxCacheSize);
 end;
 
 
@@ -59,6 +56,19 @@ destructor TFixedHeightScrollBoxList<TView>.Destroy;
 begin
   FEngine.Free;
   inherited;
+end;
+
+
+function TFixedHeightScrollBoxList<TView>.GetItemCount: Integer;
+begin
+  Result := FItemCount;
+end;
+
+
+//Simply to meet core requirement - all Indexes have the same height in this implementation
+function TFixedHeightScrollBoxList<TView>.GetItemHeight(const Index:Integer):Integer;
+begin
+  Result := FFixedRowHeight;
 end;
 
 
