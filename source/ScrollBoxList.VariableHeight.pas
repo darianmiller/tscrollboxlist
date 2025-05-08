@@ -34,6 +34,10 @@ type
   private
     FEngine:TScrollBoxListCore<TView>;
     FData:TList<IScrollBoxListItem<TModel>>;
+    FBindItem:TVariableHeightBindItem<TView, TModel>;
+    function GetItemCount:Integer;
+    function GetItemHeight(const Index:Integer):Integer;
+    procedure DoBind(const View:TView; const Index:Integer);
   public
     /// <summary>
     /// Creates a virtual list where each item can have its own height.
@@ -65,34 +69,16 @@ var
   ItemIntf:IScrollBoxListItem<TModel>;
 begin
   inherited Create;
+  FBindItem := OnBindItem;
 
-  // snapshot the enumerable into a list for indexing
+  // Work off a local copy in case source changes
   FData := TList<IScrollBoxListItem<TModel>>.Create;
   for ItemIntf in DataElements do
   begin
     FData.Add(ItemIntf);
   end;
 
-  // create and configure the shared engine
-  FEngine := TScrollBoxListCore<TView>.Create(AScrollBox,
-    // total count
-    function:Integer
-    begin
-      Result := FData.Count;
-    end,
-  // per-item height
-    function(const Index:Integer):Integer
-    begin
-      Result := FData[index].ViewHeight;
-    end, OnCreateItem,
-  // bind view to model
-    procedure(const View:TView; const Index:Integer)
-    var
-      M:TModel;
-    begin
-      M := FData[index].GetData;
-      OnBindItem(View, M, index);
-    end, MaxCacheSize);
+  FEngine := TScrollBoxListCore<TView>.Create(AScrollBox, GetItemCount, GetItemHeight, OnCreateItem, DoBind, MaxCacheSize);
 end;
 
 
@@ -107,6 +93,28 @@ end;
 procedure TVariableHeightScrollBoxList<TView, TModel>.Refresh;
 begin
   FEngine.Refresh;
+end;
+
+
+function TVariableHeightScrollBoxList<TView, TModel>.GetItemCount:Integer;
+begin
+  Result := FData.Count;
+end;
+
+
+function TVariableHeightScrollBoxList<TView, TModel>.GetItemHeight(const Index:Integer):Integer;
+begin
+  Result := FData[Index].ViewHeight;
+end;
+
+
+procedure TVariableHeightScrollBoxList<TView, TModel>.DoBind(const View:TView; const Index:Integer);
+var
+  Model:TModel;
+begin
+  Model := FData[Index].GetData;
+
+  FBindItem(View, Model, Index);
 end;
 
 
