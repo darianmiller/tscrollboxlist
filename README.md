@@ -1,5 +1,7 @@
 # TScrollBoxList
 
+![TScrollBox](bin/TScrollBox.png)
+
 ## Virtual scroll box list for Delphi VCL
 
 Display an unlimited number of TFrames within a TScrollBox with configurable cache, smooth scrolling and
