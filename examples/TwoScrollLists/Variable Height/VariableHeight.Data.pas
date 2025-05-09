@@ -13,7 +13,8 @@ type
     Description:string;
     CurrentValue:Integer;
     // For variable height items, ideally, save the last computed height when created/last populated
-    // so it doesn't need to be calculated on startup and lag the initial draw (as we need total list height for proper scroll bar navigation)
+    // so it doesn't need to be calculated on startup and lag the initial draw
+    // (as we need total list height for proper scroll bar navigation)
     // Or add setting height to item creation for fixed-height items
     LastHeight:Integer;
   end;
@@ -31,17 +32,17 @@ uses
 function ExampleVariableDataList:TList<TMyHeightData>;
 var
   Item:TMyHeightData;
-  i:Integer;
+  Index:Integer;
 begin
   Result := TList<TMyHeightData>.Create;
-  for i := 0 to 99999 do
+  for Index := 0 to 99999 do
   begin
     Item.Title := 'Title ' + TGUID.NewGuid.ToString;
     Item.Description := 'Desc ' + TGUID.NewGuid.ToString;
-    Item.CurrentValue := i;
-    Item.LastHeight := IfThen(i mod 7 = 0, 250, 100);
+    Item.CurrentValue := Index;
+    Item.LastHeight := IfThen(Index mod 7 = 0, 250, 100);
 
-    Result.Add(item);
+    Result.Add(Item);
   end;
 end;
 

@@ -8,7 +8,6 @@ uses
   Vcl.Forms,
   Vcl.ExtCtrls,
   Vcl.StdCtrls,
-  ScrollBoxList.VariableHeight,
   FixedHeight.Data;
 
 type
@@ -33,7 +32,6 @@ procedure MyFixedFrameBind(const AView:TMyFixedHeightFrame; const AModel:TMyFixe
 implementation
 
 uses
-  WinAPi.Windows,
   System.SysUtils;
 
 {$R *.dfm}
@@ -56,7 +54,8 @@ end;
 constructor TMyFixedHeightFrame.Create(AOwner: TComponent);
 begin
   inherited;
-  Label1.Caption := Format('Created at %s', [FormatDateTime('hh:nn:ss:zzz', Now)]);  //Helps prove the frame instance will get re-used
+  //Helps prove the frame instance will get re-used
+  Label1.Caption := Format('Created at %s', [FormatDateTime('hh:nn:ss:zzz', Now)]);
 end;
 
 

@@ -8,7 +8,6 @@ uses
   Vcl.Forms,
   Vcl.ExtCtrls,
   Vcl.StdCtrls,
-  ScrollBoxList.VariableHeight,
   VariableHeight.Data;
 
 type
@@ -33,7 +32,6 @@ procedure MyFrameBind(const AView:TMyVariableHeightFrame; const AModel:TMyHeight
 implementation
 
 uses
-  WinAPi.Windows,
   System.SysUtils;
 
 {$R *.dfm}
@@ -56,14 +54,16 @@ end;
 constructor TMyVariableHeightFrame.Create(AOwner: TComponent);
 begin
   inherited;
-  Label1.Caption := Format('Created at %s', [FormatDateTime('hh:nn:ss:zzz', Now)]);  //To show that the frame instance will get re-used
+  // To help demonstrate that this frame instance will get re-used
+  // (as the created date won't change)
+  Label1.Caption := Format('Created at %s', [FormatDateTime('hh:nn:ss:zzz', Now)]);
 end;
 
 
 procedure TMyVariableHeightFrame.DoBind(const Item:TMyHeightData; const Index:Integer);
 begin
-  Label2.caption := Item.Title;
-  Label3.caption := Item.Description;
+  Label2.Caption := Item.Title;
+  Label3.Caption := Item.Description;
   Label4.Caption := Item.CurrentValue.ToString;
 end;
 

@@ -27,14 +27,14 @@ uses
 function ExampleFixedDataList:TList<TMyFixedData>;
 var
   Item:TMyFixedData;
-  i:Integer;
+  Index:Integer;
 begin
   Result := TList<TMyFixedData>.Create;
-  for i := 0 to 99999 do // no one wants to create 100,000 TFrames at once, right?
+  for Index := 0 to 99999 do // no one wants to create 100,000 TFrames at once, right?
   begin
     Item.Title := 'Title ' + TGUID.NewGuid.ToString;
     Item.Description := 'Desc ' + TGUID.NewGuid.ToString;
-    Item.CurrentValue := i;
+    Item.CurrentValue := Index;
 
     Result.Add(Item);
   end;
